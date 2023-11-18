@@ -1,8 +1,6 @@
-from flask import Flask, render_template, url_for, flash, redirect
-from forms import SignUpForm, LoginForm
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = 'ac2f1736284e44ba9b19ccdc97e783b9'
+from flask import render_template, url_for, flash, redirect
+from carrent.forms import SignUpForm, LoginForm
+from carrent import app
 
 @app.route("/sign-up", methods=['GET', 'POST'],strict_slashes=False)
 def sign_up():
@@ -23,10 +21,7 @@ def login():
             flash('login unsuccessful, Please check your email and password', 'danger')
     return render_template('login.html', title='login', form=form)
 
+@app.route("/", strict_slashes=False)
 @app.route("/home", strict_slashes=False)
 def home():
     return render_template('home.html', title='Homepage',)
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
