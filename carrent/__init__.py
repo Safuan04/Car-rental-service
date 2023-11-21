@@ -1,3 +1,4 @@
+"""Initiating the flask app"""
 from flask import Flask
 from urllib.parse import quote_plus
 from flask_sqlalchemy import SQLAlchemy
@@ -12,5 +13,6 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+login_manager.login_message_category = 'info'
 
 from carrent import routes
