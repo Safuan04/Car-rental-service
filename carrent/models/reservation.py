@@ -9,4 +9,4 @@ class Reservation(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
 
     def __repr__(self):
-        return f"Reservation('{self.start_date}', '{self.end_date}') "
+        return f"Reservation('{self.start_date}', '{self.end_date}')"

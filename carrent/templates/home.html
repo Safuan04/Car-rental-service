@@ -1,4 +1,30 @@
 {% extends 'layout.html' %}
 {% block content %}
-    <h1>Homepage</h1>
+    <div class="container mt-4">
+        <div class="jumbotron text-center">
+            <h1 class="display-4">Welcome to CarRent!</h1>
+            <p class="lead">Discover our range of cars.</p>
+            <hr class="my-4">
+            <p>Find what you need and enjoy your experience with us.</p>
+            <a class="btn btn-outline-info btn-lg" href="{{ url_for('sign_up') }}" role="button">Get Started</a>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <div class="row">
+            {% for car in cars %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename='car_images/' + car.img_file) }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
+                            <p class="card-text">Provider: <a href="#">{{ car.car_owner.name }}</a></p>
+                            <p class="card-text">Year: {{ car.year }}</p>
+                            <p class="card-text">Price: {{ car.daily_price }} dh per day</p>
+                            <a href="{{ url_for('reservation', car_id=car.id) }}" class="btn btn-outline-info">Book</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock content %}

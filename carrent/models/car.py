@@ -10,7 +10,8 @@ class Car(db.Model):
     daily_price = db.Column(db.Float)
     availability = db.Column(db.Boolean)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    img_file = db.Column(db.String(256), nullable=False)
     owner_id = db.Column(db.Integer, db.ForeignKey('owner.id'), nullable=False)
 
     def __repr__(self):
-        return f"Car('{self.owner}', '{self.model}', '{self.date_posted}') "
+        return f"Car('{self.make}', '{self.model}', '{self.date_posted}')"

@@ -1,17 +1,18 @@
 import secrets, os
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request
-from flask_login import login_user, current_user, logout_user, login_required
+from flask_login import login_user, current_user, logout_user,\
+    login_required
 from carrent import app, db, bcrypt
-from carrent.forms import SignUpForm, LoginForm, UpdateAccountForm
+from carrent.forms import SignUpForm, LoginForm, UpdateAccountForm,\
+    PostCarForm, ReservationForm
 from carrent.models.user import User
 from carrent.models.car import Car
 from carrent.models.owner import Owner
 from carrent.models.reservation import Reservation
-from carrent import app, db, bcrypt
 
 
-@app.route("/sign-up", methods=['GET', 'POST'],strict_slashes=False)
+@app.route("/sign-up", methods=['GET', 'POST'], strict_slashes=False)
 def sign_up():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -25,7 +26,7 @@ def sign_up():
         return redirect(url_for('login'))
     return render_template('sign-up.html', title='Sign-up', form=form)
 
-@app.route("/login", methods=['GET', 'POST'],strict_slashes=False)
+@app.route("/login", methods=['GET', 'POST'], strict_slashes=False)
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -43,7 +44,8 @@ def login():
 @app.route("/", strict_slashes=False)
 @app.route("/home", strict_slashes=False)
 def home():
-    return render_template('home.html', title='Homepage',)
+    cars = Car.query.all()
+    return render_template('home.html', title='Homepage', cars=cars)
 
 @app.route("/logout", strict_slashes=False)
 def logout():
@@ -64,7 +66,7 @@ def save_pic(form_pic):
 
     return pic_fn
 
-@app.route("/account",  methods=['GET', 'POST'],strict_slashes=False)
+@app.route("/account",  methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def account():
     form = UpdateAccountForm()
@@ -83,3 +85,52 @@ def account():
     img_file = url_for('static', filename='profile_pics/' + current_user.img_file)
     return render_template('account.html', title='Account',
                            img_file=img_file, form=form )
+
+def save_car_pic(car_pic):
+    """Saving the user profile picture"""
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(car_pic.filename)
+    pic_fn = random_hex + f_ext
+    pic_path = os.path.join(app.root_path, 'static/car_images', pic_fn)
+    car_pic.save(pic_path)
+    return pic_fn
+
+@app.route("/car/new", methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def new_car():
+    form = PostCarForm()
+    if form.validate_on_submit():
+        if form.pic.data:
+            pic_file = save_car_pic(form.pic.data)
+        owner_name = form.car_owner.data
+        owner = Owner.query.filter_by(name=owner_name).first()
+        car = Car(make=form.make.data,
+                  model =form.model.data,
+                  year=form.year.data,
+                  description=form.description.data,
+                  daily_price=form.daily_price.data,
+                  car_owner = owner,
+                  img_file = pic_file
+                  )
+        db.session.add(car)
+        db.session.commit()
+        flash('You car has been posted', 'success')
+        return redirect(url_for('home'))
+    return render_template('post_car.html', title='New Car', form=form)
+
+@app.route("/reservation/<int:car_id>", methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def reservation(car_id):
+    car = Car.query.get_or_404(car_id)
+    form = ReservationForm()
+    if form.validate_on_submit():
+        reservation = Reservation(start_date=form.start_date.data,
+                                  end_date=form.end_date.data,
+                                  car_id=car.id,
+                                  user_id=current_user.id,
+                                  owner_id=car.car_owner.id)
+        db.session.add(reservation)
+        db.session.commit()
+        flash('Your booking has completed', 'success')
+        return redirect(url_for('home'))
+    return render_template('reservation.html', title=car.make + '.' + car.model, car=car, form=form)

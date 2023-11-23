@@ -7,4 +7,4 @@ class Owner(db.Model):
     cars = db.relationship('Car', backref='car_owner', lazy=True)
 
     def __repr__(self):
-        return f"Owner('{self.name}', '{self.address}') "
+        return f"Owner('{self.name}', '{self.address}')"

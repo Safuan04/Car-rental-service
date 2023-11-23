@@ -2,9 +2,14 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, length, Email, EqualTo, ValidationError
+from datetime import datetime
+from wtforms import StringField, PasswordField, SubmitField, BooleanField,\
+    IntegerField, TextAreaField, FloatField, DateField
+from wtforms.validators import DataRequired, length, Email, EqualTo,\
+    ValidationError
 from carrent.models.user import User
+from carrent.models.owner import Owner
+from carrent.models.reservation import Reservation
 
 
 class SignUpForm(FlaskForm):
@@ -43,7 +48,7 @@ class UpdateAccountForm(FlaskForm):
                            validators=[DataRequired(), length(min=4, max=20)])
     email = StringField('Email', 
                         validators=[DataRequired(), Email()])
-    pic = FileField('Update profile pictutre', validators=[FileAllowed(['jpg', 'png'])])
+    pic = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
 
     def validate_username(self, username):
@@ -57,3 +62,25 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('Email used. Please choose another one')
+            
+class PostCarForm(FlaskForm):
+    """This is the PostCar form class"""
+    car_owner = StringField('car owner', validators=[DataRequired()])
+    make = StringField('make', validators=[DataRequired()])
+    model = StringField('model', validators=[DataRequired()])
+    year = IntegerField('year', validators=[DataRequired()], default=2015)
+    description = TextAreaField('desciption', validators=[DataRequired()])
+    daily_price = FloatField('daily_price', validators=[DataRequired()])
+    pic = FileField('Car picture', validators=[DataRequired(), FileAllowed(['jpeg', 'jpg', 'png'])])
+    submit = SubmitField('Post')
+
+    def validate_car_owner(self, car_owner):
+        car_owner = Owner.query.filter_by(name=car_owner.data).first()
+        if not car_owner:
+            raise ValidationError("Owner doesn't exists")
+
+class ReservationForm(FlaskForm):
+    """This is the Reservation form class"""
+    start_date = DateField('From', validators=[DataRequired()], default=datetime.utcnow())
+    end_date = DateField('To', validators=[DataRequired()], default=datetime.utcnow())
+    submit = SubmitField('Book')
