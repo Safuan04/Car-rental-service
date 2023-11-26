@@ -1,5 +1,6 @@
 import secrets, os
 from PIL import Image
+from wtforms.validators import ValidationError
 from flask import render_template, url_for, flash, redirect, request
 from flask_login import login_user, current_user, logout_user,\
     login_required
@@ -45,7 +46,8 @@ def login():
 @app.route("/home", strict_slashes=False)
 def home():
     cars = Car.query.all()
-    return render_template('home.html', title='Homepage', cars=cars)
+    owners = Owner.query.all()
+    return render_template('home.html', title='Homepage', cars=cars, owners=owners)
 
 @app.route("/logout", strict_slashes=False)
 def logout():
@@ -122,15 +124,32 @@ def new_car():
 @login_required
 def reservation(car_id):
     car = Car.query.get_or_404(car_id)
+    owners = Owner.query.all()
     form = ReservationForm()
+
     if form.validate_on_submit():
-        reservation = Reservation(start_date=form.start_date.data,
-                                  end_date=form.end_date.data,
-                                  car_id=car.id,
-                                  user_id=current_user.id,
-                                  owner_id=car.car_owner.id)
-        db.session.add(reservation)
-        db.session.commit()
-        flash('Your booking has completed', 'success')
-        return redirect(url_for('home'))
-    return render_template('reservation.html', title=car.make + '.' + car.model, car=car, form=form)
+        form.car_id = car_id
+        try:
+            form.validate_reservation()
+            reservation = Reservation(start_date=form.start_date.data,
+                                    end_date=form.end_date.data,
+                                    car_id=car.id,
+                                    user_id=current_user.id,
+                                    owner_id=car.car_owner.id)
+            db.session.add(reservation)
+            db.session.commit()
+            flash('Your booking has completed', 'success')
+            return redirect(url_for('home'))
+        except ValidationError as e:
+            flash(str(e), 'danger')
+            return render_template('reservation.html',
+                                   title=car.make + '.' + car.model,
+                                   car=car, form=form, owners=owners)
+    return render_template('reservation.html',
+                           title=car.make + '.' + car.model,
+                           car=car, form=form, owners = owners)
+
+@app.route("/owner/<int:owner_id>", strict_slashes=False)
+def owner(owner_id):
+    owner = Owner.query.get_or_404(owner_id)
+    return render_template('owner.html', titel=owner.name, owner=owner)

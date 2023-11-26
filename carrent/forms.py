@@ -84,3 +84,17 @@ class ReservationForm(FlaskForm):
     start_date = DateField('From', validators=[DataRequired()], default=datetime.utcnow())
     end_date = DateField('To', validators=[DataRequired()], default=datetime.utcnow())
     submit = SubmitField('Book')
+
+    def validate_reservation(self):
+        start_date = self.start_date.data
+        end_date = self.end_date.data
+
+        if start_date and end_date:
+            conflicting_reservations = Reservation.query.filter(
+                Reservation.car_id == self.car_id,
+                Reservation.start_date <= end_date,
+                Reservation.end_date >= start_date
+            ).all()
+
+            if conflicting_reservations:
+                raise ValidationError('This car is not available for the selected dates. Please choose different dates.')

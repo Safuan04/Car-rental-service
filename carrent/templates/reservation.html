@@ -2,19 +2,33 @@
 {% block content %}
     <div class="container mt-4">
         <div class="row">
-            <div class="col-md-4 mb-4">
+            <div class="col-md-6 mx-auto">
                 <div class="card">
                     <img src="{{ url_for('static', filename='car_images/' + car.img_file) }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}">
                     <form method="post" action="">
                         {{ form.hidden_tag() }}
                         <div class="card-body">
                             <h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
-                            <p class="card-text">Provider: <a href="#">{{ car.car_owner.name }}</a></p>
+                            {% for owner in owners %}
+                                {% if owner.id == car.car_owner.id %}
+                            <p class="card-text">Provider: <a href="{{ url_for('owner', owner_id=owner.id) }}">{{ car.car_owner.name }}</a></p>
+                                {% endif %}
+                            {% endfor %}
                             <p class="card-text">Year: {{ car.year }}</p>
-                            <p class="card-text">Price: {{ car.daily_price }} dh per day</p>
-                            <p class="card-text">From: {{ form.start_date }}</p>
-                            <p class="card-text">to: {{ form.end_date }}</p>
-                            <p>{{ form.submit(class="btn btn-outline-info") }}</p>
+                            <p class="card-text">Description: {{ car.description }}</p>
+                            <p class="card-text">Location: {{ car.car_owner.address }}</p>
+                            <p class="card-text">Price: {{ car.daily_price }} DH per day</p>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="start_date">Start Date:</label>
+                                    {{ form.start_date(class="form-control", id="start_date", placeholder="Select start date", required=True) }}
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="end_date">End Date:</label>
+                                    {{ form.end_date(class="form-control", id="end_date", placeholder="Select end date", required=True) }}
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block">Book Now</button>
                         </div>
                     </form>
                 </div>
