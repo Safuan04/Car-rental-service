@@ -153,3 +153,12 @@ def reservation(car_id):
 def owner(owner_id):
     owner = Owner.query.get_or_404(owner_id)
     return render_template('owner.html', titel=owner.name, owner=owner)
+
+@app.route("/about", strict_slashes=False)
+def about():
+    return render_template('about.html', title='About Us')
+
+@app.route("/owners", strict_slashes=False)
+def owners():
+    owners = Owner.query.all()
+    return render_template('owners.html', title='Providers', owners=owners)
