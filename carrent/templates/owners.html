@@ -62,7 +62,7 @@
                 <div class="col-md-6 mb-4">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title"><a href="{{ url_for() }}"></a> {{owner.name}} </h5>
+                            <h5 class="card-title"><a href="{{ url_for('owner', owner_id=owner.id) }}"> {{owner.name}} </a></h5>
                             <p class="card-text">Address: {{owner.address}} </p>
                         </div>
                     </div>
