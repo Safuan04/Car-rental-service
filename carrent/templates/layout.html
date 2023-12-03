@@ -21,6 +21,14 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('home') }}">Home</a>
                 </li>
+                {% if current_user.username == 'Safuan' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('new_car') }}">New Car</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('new_owner') }}">New Owner</a>
+                </li>
+                {% endif %}
                 {% if current_user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link" href="{{ url_for('account') }}">Account</a>

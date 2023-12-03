@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, logout_user,\
     login_required
 from carrent import app, db, bcrypt
 from carrent.forms import SignUpForm, LoginForm, UpdateAccountForm,\
-    PostCarForm, ReservationForm
+    PostCarForm, ReservationForm, PostOwnerForm
 from carrent.models.user import User
 from carrent.models.car import Car
 from carrent.models.owner import Owner
@@ -100,25 +100,60 @@ def save_car_pic(car_pic):
 @app.route("/car/new", methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def new_car():
-    form = PostCarForm()
-    if form.validate_on_submit():
-        if form.pic.data:
-            pic_file = save_car_pic(form.pic.data)
-        owner_name = form.car_owner.data
-        owner = Owner.query.filter_by(name=owner_name).first()
-        car = Car(make=form.make.data,
-                  model =form.model.data,
-                  year=form.year.data,
-                  description=form.description.data,
-                  daily_price=form.daily_price.data,
-                  car_owner = owner,
-                  img_file = pic_file
-                  )
-        db.session.add(car)
-        db.session.commit()
-        flash('You car has been posted', 'success')
+    if current_user.username == 'Safuan':
+        form = PostCarForm()
+        if form.validate_on_submit():
+            if form.pic.data:
+                pic_file = save_car_pic(form.pic.data)
+            owner_name = form.car_owner.data
+            owner = Owner.query.filter_by(name=owner_name).first()
+            car = Car(make = form.make.data,
+                    model = form.model.data,
+                    year = form.year.data,
+                    description = form.description.data,
+                    Seating = form.seating.data,
+                    daily_price = form.daily_price.data,
+                    car_owner = owner,
+                    img_file = pic_file
+                    )
+            db.session.add(car)
+            db.session.commit()
+            flash('You car has been posted', 'success')
+            return redirect(url_for('home'))
+        return render_template('post_car.html', title='New Car', form=form)
+    else:
         return redirect(url_for('home'))
-    return render_template('post_car.html', title='New Car', form=form)
+
+@app.route("/car/<int:car_id>/update", methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def update_car(car_id):
+    if current_user.username == 'Safuan':
+        car = Car.query.get_or_404(car_id)
+        form = PostCarForm()
+        if form.validate_on_submit():
+            if form.pic.data:
+                pic_file = save_car_pic(form.pic.data)
+                car.img_file = pic_file
+            car.make = form.make.data
+            car.model = form.model.data
+            car.year = form.year.data
+            car.Seating = form.seating.data
+            car.description = form.description.data
+            car.daily_price = form.daily_price.data
+            db.session.commit()
+            flash('Your car has been updated!', 'success')
+            return redirect(url_for('home'))
+        elif request.method == "GET":
+            form.make.data = car.make
+            form.model.data = car.model
+            form.year.data = car.year
+            form.seating.data = car.Seating
+            form.description.data = car.description
+            form.daily_price.data = car.daily_price
+            form.car_owner.data = car.car_owner.name
+        return render_template('post_car.html', title='Car Update', car=car, form=form)
+    else:
+        return redirect(url_for('home'))
 
 @app.route("/reservation/<int:car_id>", methods=['GET', 'POST'], strict_slashes=False)
 @login_required
@@ -153,6 +188,22 @@ def reservation(car_id):
 def owner(owner_id):
     owner = Owner.query.get_or_404(owner_id)
     return render_template('owner.html', titel=owner.name, owner=owner)
+
+@app.route("/owner/new", methods=['GET', 'POST'], strict_slashes=False)
+@login_required
+def new_owner():
+    """"""
+    if current_user.username == 'Safuan':
+        form = PostOwnerForm()
+        if form.validate_on_submit():
+            owner = Owner(name=form.name.data, address=form.address.data)
+            db.session.add(owner)
+            db.session.commit()
+            flash('Owner successfully created!', 'success')
+            return redirect(url_for('home'))
+        return render_template('post_owner.html', title='New Provider', form=form)
+    else:
+        return redirect(url_for('home'))
 
 @app.route("/about", strict_slashes=False)
 def about():

@@ -60,6 +60,19 @@
                         {% endif %}
                     </div>
                     <div class="form-group">
+                        {{ form.seating.label }}
+                        {% if form.seating.errors %}
+                            {{ form.seating(class="form-control is-invalid") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.seating.errors %}
+                                    <span class="text-danger">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.seating(class="form-control") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
                         {{ form.description.label }}
                         {% if form.description.errors %}
                             {{ form.description(class="form-control is-invalid") }}
@@ -96,7 +109,7 @@
                     </div>
                 </fieldset>
                 <div>
-                    {{ form.submit(class="btn btn-outline-info") }}
+                    {{ form.submit(class="btn btn-outline-info mb-4") }}
                 </div>
             </form>
         </div>

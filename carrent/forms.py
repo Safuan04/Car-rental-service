@@ -14,9 +14,9 @@ from carrent.models.reservation import Reservation
 
 class SignUpForm(FlaskForm):
     """This is the signup from class"""
-    username = StringField('Username', 
+    username = StringField('Username',
                            validators=[DataRequired(), length(min=4, max=20)])
-    email = StringField('Email', 
+    email = StringField('Email',
                         validators=[DataRequired(), Email()])
     password = PasswordField('Password',
                              validators=[DataRequired(), length(min=4)])
@@ -28,7 +28,7 @@ class SignUpForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError('Username used. Please choose another one')
-        
+
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user:
@@ -36,7 +36,7 @@ class SignUpForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     """This is the signup from class"""
-    email = StringField('Email', 
+    email = StringField('Email',
                         validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('remember me')
@@ -44,9 +44,9 @@ class LoginForm(FlaskForm):
 
 class UpdateAccountForm(FlaskForm):
     """This is the UpdateAccount from class"""
-    username = StringField('Username', 
+    username = StringField('Username',
                            validators=[DataRequired(), length(min=4, max=20)])
-    email = StringField('Email', 
+    email = StringField('Email',
                         validators=[DataRequired(), Email()])
     pic = FileField('Update profile picture', validators=[FileAllowed(['jpg', 'png'])])
     submit = SubmitField('Update')
@@ -56,22 +56,34 @@ class UpdateAccountForm(FlaskForm):
             user = User.query.filter_by(username=username.data).first()
             if user:
                 raise ValidationError('Username used. Please choose another one')
-        
+
     def validate_email(self, email):
         if email.data != current_user.email:
             user = User.query.filter_by(email=email.data).first()
             if user:
                 raise ValidationError('Email used. Please choose another one')
-            
+
+class PostOwnerForm(FlaskForm):
+    """This is the PostOwner form class"""
+    name = StringField('name', validators=[DataRequired()])
+    address = TextAreaField('address', validators=[DataRequired()])
+    submit = SubmitField('create')
+
+    def validate_name(self, name):
+        owner = Owner.query.filter_by(name=name.data).first()
+        if owner:
+            raise ValidationError('Name exists. Please choose another one')
+
 class PostCarForm(FlaskForm):
     """This is the PostCar form class"""
     car_owner = StringField('car owner', validators=[DataRequired()])
     make = StringField('make', validators=[DataRequired()])
     model = StringField('model', validators=[DataRequired()])
     year = IntegerField('year', validators=[DataRequired()], default=2015)
-    description = TextAreaField('desciption', validators=[DataRequired()])
+    description = TextAreaField('desciption')
+    seating = IntegerField('seating', validators=[DataRequired()])
     daily_price = FloatField('daily_price', validators=[DataRequired()])
-    pic = FileField('Car picture', validators=[DataRequired(), FileAllowed(['jpeg', 'jpg', 'png'])])
+    pic = FileField('Car picture', validators=[FileAllowed(['jpeg', 'jpg', 'png'])])
     submit = SubmitField('Post')
 
     def validate_car_owner(self, car_owner):
@@ -95,6 +107,5 @@ class ReservationForm(FlaskForm):
                 Reservation.start_date <= end_date,
                 Reservation.end_date >= start_date
             ).all()
-
             if conflicting_reservations:
                 raise ValidationError('This car is not available for the selected dates. Please choose different dates.')

@@ -25,7 +25,9 @@
 			{% for car in cars %}
 				<div class="col-md-4 mb-4">
 					<div class="card">
-						<img src="{{ url_for('static', filename='car_images/' + car.img_file) }}" class="card-img-top" alt="{{ car.make }} {{ car.model }}">
+						{% if car.img_file %}
+							<img src="{{ url_for('static', filename='car_images/' + car.img_file) }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ car.make }} {{ car.model }}">
+						{% endif %}
 						<div class="card-body">
 							<h5 class="card-title">{{ car.make }} {{ car.model }}</h5>
 							{% for owner in owners %}
@@ -36,8 +38,11 @@
 							<p class="card-text">Year: {{ car.year }}</p>
 							<p class="card-text">Price: {{ car.daily_price }} dh per day</p>
 							<a href="{{ url_for('reservation', car_id=car.id) }}" class="btn btn-outline-info">Book</a>
+							{% if current_user.username == 'Safuan' %}
+							<a href="{{ url_for('update_car', car_id=car.id) }}" class="btn btn-outline-info">Update</a>
+							{% endif %}
 						</div>
-					</div>
+					</div>					
 				</div>
 			{% endfor %}
 		</div>
