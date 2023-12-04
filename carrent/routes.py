@@ -43,6 +43,9 @@ def login():
     return render_template('login.html', title='login', form=form)
 
 @app.route("/", strict_slashes=False)
+def landing_page():
+    return render_template('Landing_page.html', title='CarRent - Landing Page')
+
 @app.route("/home", strict_slashes=False)
 def home():
     cars = Car.query.all()
@@ -158,7 +161,7 @@ def update_car(car_id):
 @app.route("/reservation/<int:car_id>", methods=['GET', 'POST'], strict_slashes=False)
 @login_required
 def reservation(car_id):
-    car = Car.query.get_or_404(car_id)
+    car = Car.query.get_or_404(car_id) 
     owners = Owner.query.all()
     form = ReservationForm()
 

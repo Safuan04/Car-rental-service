@@ -1,25 +1,32 @@
 {% extends 'layout.html' %}
 {% block content %}
-	{% if not current_user.is_authenticated %}
+	<style>
+		.jumbotron-bg {
+			background-image: url('static/web_images/2.jpg');
+			background-size: cover;
+			background-position: center;
+			height: 350px;
+			display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+			color: whitesmoke;
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+		}
+
+		.card:hover {
+            background-color: #f0f0f0;
+        }
+	</style>
+
+	<div class="container mt-4 jumbotron-bg">
 		<div class="container mt-4">
-			<div class="jumbotron text-center">
+			<div class="text-center">
 				<h1 class="display-4">Welcome to CarRent!</h1>
 				<p class="lead">Discover our range of cars.</p>
-				<hr class="my-4">
-				<p>Find what you need and enjoy your experience with us.</p>
-				<a class="btn btn-outline-info btn-lg" href="{{ url_for('sign_up') }}" role="button">Get Started</a>
 			</div>
 		</div>
-	{% else %}
-	<div class="container mt-4">
-		<div class="jumbotron text-center">
-			<h1 class="display-4">Welcome to CarRent!</h1>
-			<p class="lead">Discover our range of cars.</p>
-			<hr class="my-4">
-			<p>Find what you need and enjoy your experience with us.</p>
-		</div>
 	</div>
-	{% endif %}
 	<div class="container mt-4">
 		<div class="row">
 			{% for car in cars %}
@@ -37,9 +44,9 @@
 							{% endfor %}
 							<p class="card-text">Year: {{ car.year }}</p>
 							<p class="card-text">Price: {{ car.daily_price }} dh per day</p>
-							<a href="{{ url_for('reservation', car_id=car.id) }}" class="btn btn-outline-info">Book</a>
+							<a href="{{ url_for('reservation', car_id=car.id) }}" class="btn btn-outline-dark">Book</a>
 							{% if current_user.username == 'Safuan' %}
-							<a href="{{ url_for('update_car', car_id=car.id) }}" class="btn btn-outline-info">Update</a>
+							<a href="{{ url_for('update_car', car_id=car.id) }}" class="btn btn-outline-dark">Update</a>
 							{% endif %}
 						</div>
 					</div>					
