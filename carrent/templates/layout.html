@@ -10,18 +10,33 @@
         <title>CarRent</title>
     {% endif %}
     <style>
+        footer {
+            font-size: small;
+        }
+
         footer a {
             color: aliceblue;
         }
-        a:hover {
-            color: blue;
+
+        footer a:hover {
+            color: wheat;
             text-decoration: none;
+        }
+
+        a:hover {
+            color: black;
+            text-decoration: none;
+        }
+
+        .social-icon img {
+            width: 30px;
+            height: 30px;
         }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{ url_for('landing_page') }}">CarRent</a>
+        <a class="navbar-brand logo" href="{{ url_for('landing_page') }}">Tet1Car</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -58,7 +73,6 @@
     </nav>
 
     <div class="container mt-3">
-        <!-- Your container content -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -77,9 +91,37 @@
     </div>
 
     <footer class="footer bg-dark text-light py-4 mt-auto">
-        <div class="container text-center">
-            <p><a href="{{ url_for('owners') }}">Our Providers</a> | <a href="{{ url_for('about') }}">About Us</a></p>
-            <p>Email: carrent@demo.com | Phone: +212643737302</p>
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div class="text-center text-md-left mb-3 mb-md-0">
+                    <p>© 2023. All Rights Reserved.</p>
+                </div>
+                <div class="text-center mr-5">
+                    <p>
+                        <a href="{{ url_for('owners') }}">Our Providers </a>|<a href="{{ url_for('about') }}"> About Us</a>
+                    </p>
+                </div>
+                <div class="text-center mb-2">
+                    <div class="social-icons">
+                        <a href="#" class="social-icon">
+                            <img src="{{ url_for('static', filename='socialmedia_icons/fb1.jpg') }}"
+                            alt="Facebook" class="img-fluid rounded-circle">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="{{ url_for('static', filename='socialmedia_icons/twiter1.jpg') }}"
+                            alt="Twitter" class="img-fluid rounded-circle">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="{{ url_for('static', filename='socialmedia_icons/insta1.jpg') }}"
+                            alt="Instagram" class="img-fluid rounded-circle">
+                        </a>
+                        <a href="#" class="social-icon">
+                            <img src="{{ url_for('static', filename='socialmedia_icons/linkdn1.jpg') }}"
+                            alt="Link-dn" class="img-fluid rounded-circle">
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 
