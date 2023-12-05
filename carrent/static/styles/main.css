@@ -22,15 +22,23 @@ body::before {
     font-size: 26px;
     color: lightgoldenrodyellow;
     margin-right: 30px;
-    font-weight: 400;
+    font-weight: 350;
 }
 .nav-item a:hover {
     color: wheat;
 }
 
-.slogan {
+.slogan h1{
     font-family: 'Montserrat', sans-serif;
+    font-size: 55px;
     text-align: center;
+}
+
+.slogan h4{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 27px;
+    text-align: center;
+    background: linear-gradient(to right, #747b7a, rgb(165, 136, 42));
 }
 
 .navbar-brand.logo {
@@ -63,6 +71,6 @@ footer a:hover {
 }
 
 .social-icon img {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
 }

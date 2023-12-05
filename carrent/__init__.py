@@ -8,7 +8,7 @@ from flask_login import LoginManager
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ac2f1736284e44ba9b19ccdc97e783b9'
 password = quote_plus('123456@App')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://carrent_dev:{password}@localhost/carrent_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://tet1car_dev:{password}@localhost/carrent_db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
